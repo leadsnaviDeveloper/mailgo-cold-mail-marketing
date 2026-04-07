@@ -1,157 +1,113 @@
-# Mailgo Campaign Suite MCP Server
+# mailgo-campaign-suite
 
-AI-powered cold email campaign management through Model Context Protocol (MCP).
+Complete cold email campaign skill for Mailgo. One skill handles the entire outreach pipeline:
 
-## Overview
+1. **Verify** recipient emails (async submit + poll)
+2. **Claim** a free pre-warmed mailbox (90+ sender score, 60 days)
+3. **Optimize** email content (spam triggers, HTML cleanup, deliverability)
+4. **Send** campaigns (content upload, lead import, activation)
+5. **Manage** campaign lifecycle (activate, pause, delete, list)
+6. **Report** campaign statistics (overview, per-round, daily progress)
 
-Mailgo Campaign Suite MCP Server connects your AI assistant directly to the [Mailgo](https://app.mailgo.ai) cold email platform. Through natural conversation, you can verify email addresses, claim pre-warmed mailboxes, launch campaigns, manage their lifecycle, and pull analytics — without touching any UI.
+## Publisher
 
-The server runs as a remote HTTP service. To connect your AI client, you only need a Mailgo API token and the server URL.
+This skill is published by **LeadsNavi**, the company behind the Mailgo cold email platform.
 
-## What You Can Do
+- Product: [https://app.mailgo.ai](https://app.mailgo.ai)
+- Publisher website: [https://www.leadsnavi.com](https://www.leadsnavi.com)
 
-### Email Verification
+## Requirements
 
-Before sending, verify your contact list for deliverability. The AI will submit up to 1000 addresses in one batch and return them categorized:
+- Python 3.7+
+- `MAILGO_API_KEY` environment variable (OpenAPI Key from Mailgo)
+- No third-party dependencies (stdlib only: `urllib`, `json`, `csv`, `ssl`)
+- Optional: `openpyxl` for .xlsx file support (`pip install openpyxl`)
 
-- `valid` — safe to send
-- `invalid` — bad address format or non-existent
-- `domain_error` — domain unreachable or misconfigured
-- `unknown` — inconclusive result
-- `unchecked` — not processed within timeout
+## Security & Credentials
 
-**Example prompt:** *"Verify these 200 email addresses before I create a campaign"*
+This skill requires a **Mailgo OpenAPI Key** (`MAILGO_API_KEY`) to operate. Please read before using:
 
----
+| Concern | Detail |
+|---------|--------|
+| **What the token can do** | Claim mailboxes, create/activate/pause/delete campaigns, verify emails, read campaign reports — all actions on your Mailgo account. |
+| **How to obtain it** | Log in to [https://app.mailgo.ai](https://app.mailgo.ai) → Click your avatar in the bottom-left corner → Personal Tokens → Create Token → Copy the token. See SKILL.md Step 0 for step-by-step instructions. |
+| **How it is used** | Sent as `X-API-Key: {token}` header to `api.leadsnavi.com` — the official Mailgo backend (LeadsNavi is the parent brand behind Mailgo; see [app.mailgo.ai](https://app.mailgo.ai) and the Mailgo website for details). |
+| **How to stay safe** | Set as a local environment variable only — **never paste into chat**. |
+| **How to revoke** | Go to [https://app.mailgo.ai](https://app.mailgo.ai) → Personal Tokens → Delete the token. |
+| **API endpoints called** | All calls go to `https://api.leadsnavi.com` (Mailgo's official API) — email verification, mailbox claiming, campaign CRUD, and reporting. Review the bundled Python scripts for exact endpoints. |
 
-### Free Mailbox
+> `MAILGO_API_KEY` is your Mailgo account credential. Keep it secure and never share it publicly.
 
-Claim a free pre-warmed sending mailbox from Mailgo (60-day validity, sender score 90+). Useful for getting started without configuring your own domain.
+## Compliance
 
-**Example prompt:** *"Claim a free mailbox for me to use as a sender"*
+This skill sends emails to recipient lists you provide. You are responsible for ensuring your campaigns comply with applicable laws and platform terms, including:
 
----
+- **CAN-SPAM Act** (US) — include a physical address and honor opt-out requests
+- **GDPR** (EU) — ensure you have a lawful basis for contacting recipients
+- **Mailgo Terms of Service** — [https://app.mailgo.ai](https://app.mailgo.ai)
 
-### Campaign Creation
+The skill's built-in email optimizer adds a soft opt-out line to every email by default.
 
-Create a fully personalized cold email campaign in one step. The AI handles:
-
-- Uploading the HTML email content
-- Creating the campaign with your send schedule and daily limit
-- Adding all recipient leads (with name, company, title, domain)
-- Activating the campaign
-
-**Personalization placeholders** available in subject and body:
-
-| Placeholder | Availability |
-|-------------|-------------|
-| `#{name}` | Always (auto-derived from email prefix) |
-| `#{email}` | Always |
-| `#{company name}` | When `recipient_companies` is provided |
-| `#{title}` | When `recipient_titles` is provided |
-| `#{domain}` | When `recipient_domains` is provided |
-
-> **Note:** Always provide the corresponding data list when using a placeholder. Unresolved placeholders render as blank gaps in the email.
-
-**Example prompt:** *"Create a campaign to these 50 leads, send Mon–Fri 9am–6pm Shanghai time, limit 30 per day"*
-
----
-
-### Campaign Management
-
-Control your campaigns at any stage:
-
-| Action | What it does |
-|--------|-------------|
-| `activate` | Start or resume a campaign |
-| `pause` | Temporarily pause sending |
-| `delete` | Remove a campaign |
-| `list` | Browse all campaigns with optional name/status filter |
-| `info` | Get full details of a specific campaign |
-
-**Example prompt:** *"Pause my Q2 Outreach campaign"* / *"List all active campaigns"*
-
----
-
-### Campaign Reports
-
-Pull analytics at any granularity:
-
-| Report type | Content |
-|-------------|---------|
-| `overview` | Totals: leads, sent, delivered, opened, replied, clicked, bounced + rates |
-| `rounds` | Per-round breakdown for multi-sequence campaigns |
-| `daily` | Day-by-day stats for a given date range |
-| `replies` | Full reply list, optionally with message body content |
-
-**Example prompt:** *"How is my campaign performing?"* / *"Show me all replies from campaign 12345 with the message content"*
-
----
-
-## Getting Started
-
-### Step 1 — Get Your API Token
-
-1. Open [app.mailgo.ai](https://app.mailgo.ai) and sign up / log in
-2. Click your profile in the bottom-left corner and select **Personal Tokens**
-3. Click **Create Token**, then copy the generated token
-
-### Step 2 — Connect Your AI Client
-
-#### Claude Desktop / claude.ai
-
-Claude connects to remote MCP servers through the UI, not a config file:
-
-1. Open **Settings → Connectors**
-2. Click **"+" → Add custom connector**
-3. Enter the server URL: `https://mcp.leadsnavi.com/mcp`
-4. Click **Advanced settings** and add a custom header:
-   - Header name: `X-API-Key`
-   - Header value: your token from Step 1
-5. Click **Add** to save
-
-#### Cursor
-
-Add the following to your Cursor MCP configuration (`~/.cursor/mcp.json`):
-
-```json
-{
-  "mcpServers": {
-    "mailgo": {
-      "url": "https://mcp.leadsnavi.com/mcp",
-      "headers": {
-        "X-API-Key": "<YOUR_MAILGO_TOKEN>"
-      }
-    }
-  }
-}
-```
-
-#### Other MCP clients
-
-For any MCP client that supports remote Streamable HTTP transport, configure:
-
-- **URL**: `https://mcp.leadsnavi.com/mcp`
-- **Header**: `X-API-Key: <YOUR_MAILGO_TOKEN>`
-
-### Step 3 — Start Using It
-
-Once connected, just talk to your AI assistant naturally:
+## Directory Structure
 
 ```
-"Verify these emails: alice@example.com, bob@example.com"
-"Claim a free sending mailbox for me"
-"Create a cold email campaign to my lead list"
-"Show me the performance overview for campaign 98765"
-"List all my paused campaigns"
+mailgo-campaign-suite/
+├── SKILL.md                        # Main skill instructions
+├── README.md                       # This file
+├── scripts/
+│   ├── verify_emails.py            # Step 1: Email verification (submit + poll)
+│   ├── claim_free_mailbox.py       # Step 2: Free mailbox claiming
+│   ├── run_campaign.py             # Step 4: Campaign creation & activation
+│   ├── campaign_control.py         # Step 5: Lifecycle management
+│   └── campaign_report.py          # Step 6: Statistics & reporting
+└── resources/
+    ├── spam-triggers.md            # Step 3: Spam trigger replacement table
+    └── industry-templates.md       # Step 3: Industry-specific email templates
 ```
 
----
+## Quick Start
 
-## Support
+```bash
+# 1. Set up authentication
+export MAILGO_API_KEY="your-api-key"
 
-- GitHub Issues: [leadsnavi-mcp-server/issues](https://github.com/netease-im/leadsnavi-mcp-server/issues)
+# 2. Verify emails
+python3 scripts/verify_emails.py alice@example.com bob@gmail.com
 
----
+# 3. Claim free mailbox
+python3 scripts/claim_free_mailbox.py
 
-Made with by the Leadsnavi Team
+# 4. Create and send campaign
+python3 scripts/run_campaign.py \
+    --sender "claimed@mailbox.com" \
+    --subject "Quick question" \
+    --body "<html><body><p>Hi</p></body></html>" \
+    --recipients "alice@example.com" \
+    --campaign-name "My Campaign"
+
+# 5. Check status
+python3 scripts/campaign_control.py list
+python3 scripts/campaign_report.py overview <campaignId>
+```
+
+## Scripts Reference
+
+| Script | Purpose | Key Args |
+|--------|---------|----------|
+| `verify_emails.py` | Submit + poll email verification | `emails...`, `--file`, `--email-column` |
+| `claim_free_mailbox.py` | Claim pre-warmed mailbox | `--json`, `--api-key` |
+| `run_campaign.py` | Full campaign creation flow | `--sender`, `--subject`, `--body/--body-file`, `--recipients/--recipients-file` |
+| `campaign_control.py` | Activate/pause/delete/list | `activate/pause/delete/list/info` |
+| `campaign_report.py` | View campaign statistics | `overview/rounds/daily`, `--json` |
+
+## Relationship to Other Mailgo Skills
+
+This suite consolidates functionality from:
+- `mailgo-auth-setup` — authentication guidance (Step 0)
+- `mailgo-email-verifier` — email verification (Step 1)
+- `mailgo-email-optimizer` — content optimization rules (Step 3)
+- `mailgo-campaign` — campaign creation (Step 4)
+- `mailgo-campaign-control` — lifecycle management (Step 5)
+- `mailgo-campaign-report` — statistics (Step 6)
+
+Those individual skills remain available for standalone use. This suite provides the same capabilities in a single, self-contained package.
