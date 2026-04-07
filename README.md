@@ -21,6 +21,42 @@ Complete cold email campaign plugin for Mailgo. One plugin handles the entire ou
 
 After installation, set your Mailgo API key as an environment variable (see [Security & Credentials](#security--credentials) below), then just ask Claude to help you send cold emails.
 
+## Installation (Cursor)
+
+```bash
+/add-plugin leadsnaviDeveloper/mailgo-cold-mail-marketing
+```
+
+See [.cursor-plugin/plugin.json](.cursor-plugin/plugin.json) for details.
+
+## Installation (Codex)
+
+```bash
+git clone https://github.com/leadsnaviDeveloper/mailgo-cold-mail-marketing.git ~/.codex/mailgo-campaign-suite
+mkdir -p ~/.agents/skills
+ln -s ~/.codex/mailgo-campaign-suite/skills ~/.agents/skills/mailgo-campaign-suite
+```
+
+See [.codex/INSTALL.md](.codex/INSTALL.md) for full instructions.
+
+## Installation (OpenCode)
+
+Add to your `opencode.json`:
+
+```json
+{
+  "plugin": ["mailgo-campaign-suite@git+https://github.com/leadsnaviDeveloper/mailgo-cold-mail-marketing.git"]
+}
+```
+
+See [.opencode/INSTALL.md](.opencode/INSTALL.md) for full instructions.
+
+## Installation (Gemini CLI)
+
+```bash
+gemini extensions install https://github.com/leadsnaviDeveloper/mailgo-cold-mail-marketing
+```
+
 ## Publisher
 
 This plugin is published by **LeadsNavi**, the company behind the Mailgo cold email platform.
@@ -64,14 +100,20 @@ The skill's built-in email optimizer adds a soft opt-out line to every email by 
 
 ```
 mailgo-cold-mail-marketing/
-├── .claude-plugin/
-│   ├── plugin.json                 # Plugin manifest
-│   └── marketplace.json            # Marketplace catalog
+├── .claude-plugin/                 # Claude Code plugin
+│   ├── plugin.json
+│   └── marketplace.json
+├── .cursor-plugin/                 # Cursor IDE plugin
+│   └── plugin.json
+├── .codex/                         # GitHub Codex support
+│   └── INSTALL.md
+├── .opencode/                      # OpenCode support
+│   └── INSTALL.md
 ├── skills/
 │   └── mailgo-campaign-suite/
 │       └── SKILL.md                # Main skill instructions
 ├── scripts/
-│   ├── verify_emails.py            # Step 1: Email verification (submit + poll)
+│   ├── verify_emails.py            # Step 1: Email verification
 │   ├── claim_free_mailbox.py       # Step 2: Free mailbox claiming
 │   ├── run_campaign.py             # Step 4: Campaign creation & activation
 │   ├── campaign_control.py         # Step 5: Lifecycle management
@@ -79,6 +121,9 @@ mailgo-cold-mail-marketing/
 ├── resources/
 │   ├── spam-triggers.md            # Step 3: Spam trigger replacement table
 │   └── industry-templates.md       # Step 3: Industry-specific email templates
+├── gemini-extension.json           # Gemini CLI extension
+├── GEMINI.md                       # Gemini context pointer
+├── package.json                    # Package metadata (OpenCode entry)
 └── README.md                       # This file
 ```
 

@@ -1,0 +1,6 @@
+{
+  "name": "mailgo-campaign-suite",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./skills/mailgo-campaign-suite/SKILL.md"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "mailgo-campaign-suite",
+  "displayName": "Mailgo Campaign Suite",
+  "description": "Complete cold email campaign suite for Mailgo — verify, optimize, send, manage, report.",
+  "version": "1.0.0",
+  "author": {
+    "name": "LeadsNavi",
+    "email": "support@leadsnavi.com"
+  },
+  "homepage": "https://app.mailgo.ai",
+  "repository": "https://github.com/leadsnaviDeveloper/mailgo-cold-mail-marketing",
+  "license": "MIT",
+  "keywords": ["email", "cold-email", "outreach", "mailgo", "campaign"],
+  "skills": "./skills/"
+}
