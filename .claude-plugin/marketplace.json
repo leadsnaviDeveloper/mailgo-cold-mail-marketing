@@ -1,0 +1,20 @@
+{
+  "name": "mailgo-plugins",
+  "owner": {
+    "name": "LeadsNavi",
+    "email": "support@leadsnavi.com"
+  },
+  "metadata": {
+    "description": "Official Mailgo cold email campaign plugins for Claude"
+  },
+  "plugins": [
+    {
+      "name": "mailgo-campaign-suite",
+      "source": "./",
+      "description": "Complete cold email campaign suite — verify, optimize, send, manage, report.",
+      "version": "1.0.0",
+      "category": "email-marketing",
+      "tags": ["email", "cold-email", "outreach", "mailgo", "campaign"]
+    }
+  ]
+}

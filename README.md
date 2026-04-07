@@ -1,6 +1,6 @@
 # mailgo-campaign-suite
 
-Complete cold email campaign skill for Mailgo. One skill handles the entire outreach pipeline:
+Complete cold email campaign plugin for Mailgo. One plugin handles the entire outreach pipeline:
 
 1. **Verify** recipient emails (async submit + poll)
 2. **Claim** a free pre-warmed mailbox (90+ sender score, 60 days)
@@ -9,9 +9,21 @@ Complete cold email campaign skill for Mailgo. One skill handles the entire outr
 5. **Manage** campaign lifecycle (activate, pause, delete, list)
 6. **Report** campaign statistics (overview, per-round, daily progress)
 
+## Installation (Claude Plugin)
+
+```bash
+# Add the marketplace
+/plugin marketplace add leadsnaviDeveloper/mailgo-cold-mail-marketing
+
+# Install the plugin
+/plugin install mailgo-campaign-suite@mailgo-plugins
+```
+
+After installation, set your Mailgo API key as an environment variable (see [Security & Credentials](#security--credentials) below), then just ask Claude to help you send cold emails.
+
 ## Publisher
 
-This skill is published by **LeadsNavi**, the company behind the Mailgo cold email platform.
+This plugin is published by **LeadsNavi**, the company behind the Mailgo cold email platform.
 
 - Product: [https://app.mailgo.ai](https://app.mailgo.ai)
 - Publisher website: [https://www.leadsnavi.com](https://www.leadsnavi.com)
@@ -51,18 +63,23 @@ The skill's built-in email optimizer adds a soft opt-out line to every email by 
 ## Directory Structure
 
 ```
-mailgo-campaign-suite/
-├── SKILL.md                        # Main skill instructions
-├── README.md                       # This file
+mailgo-cold-mail-marketing/
+├── .claude-plugin/
+│   ├── plugin.json                 # Plugin manifest
+│   └── marketplace.json            # Marketplace catalog
+├── skills/
+│   └── mailgo-campaign-suite/
+│       └── SKILL.md                # Main skill instructions
 ├── scripts/
 │   ├── verify_emails.py            # Step 1: Email verification (submit + poll)
 │   ├── claim_free_mailbox.py       # Step 2: Free mailbox claiming
 │   ├── run_campaign.py             # Step 4: Campaign creation & activation
 │   ├── campaign_control.py         # Step 5: Lifecycle management
 │   └── campaign_report.py          # Step 6: Statistics & reporting
-└── resources/
-    ├── spam-triggers.md            # Step 3: Spam trigger replacement table
-    └── industry-templates.md       # Step 3: Industry-specific email templates
+├── resources/
+│   ├── spam-triggers.md            # Step 3: Spam trigger replacement table
+│   └── industry-templates.md       # Step 3: Industry-specific email templates
+└── README.md                       # This file
 ```
 
 ## Quick Start
